@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tra Cứu Đài Craven 0-6 Tuổi</title>
   <meta name="description" content="Tra cứu số bài hát và câu chuyện nhanh chóng cho đài Craven, thẻ nhớ 8GB cho bé 0-6 tuổi">
-  <meta name="theme-color" content="#0F172A">
+  <meta name="theme-color" content="#0F172A" id="metaThemeColor">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
@@ -36,11 +36,19 @@
         </div>
       </div>
 
-      <button id="modeToggleBtn" class="mode-pill-btn" title="Chuyển đổi thứ tự đài phát và thứ tự chuẩn">
-        <span class="mode-indicator-dot"></span>
-        <i id="modeIcon" class="ph-bold ph-radio"></i>
-        <span id="modeText">Đài FAT</span>
-      </button>
+      <div class="header-actions">
+        <!-- Dark Mode Toggle Button -->
+        <button id="themeToggleBtn" class="theme-icon-btn" title="Chuyển chế độ Sáng / Tối" aria-label="Đổi giao diện">
+          <i id="themeIcon" class="ph-bold ph-moon"></i>
+        </button>
+
+        <!-- Mode FAT vs Logic Pill Button -->
+        <button id="modeToggleBtn" class="mode-pill-btn" title="Chuyển đổi thứ tự đài phát và thứ tự chuẩn">
+          <span class="mode-indicator-dot"></span>
+          <i id="modeIcon" class="ph-bold ph-radio"></i>
+          <span id="modeText">Đài FAT</span>
+        </button>
+      </div>
     </div>
   </header>
 

@@ -5,6 +5,7 @@
   // --- State ---
   let appData = { folders: [], tracks: [] };
   let mode = localStorage.getItem('craven_mode') || 'fat'; // 'fat' or 'nat'
+  let currentTheme = localStorage.getItem('craven_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   let currentLang = 'all'; // 'all', 'en', 'vi'
   let currentFolder = 'all';
   let searchQuery = '';
@@ -29,6 +30,11 @@
   const modeIcon = document.getElementById('modeIcon');
   const modeText = document.getElementById('modeText');
   const lcdModeIndicator = document.getElementById('lcdModeIndicator');
+
+  // Theme Elements
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const metaThemeColor = document.getElementById('metaThemeColor');
 
   // Keypad elements
   const screenDialNumber = document.getElementById('screenDialNumber');
@@ -105,9 +111,33 @@
     }
   }
 
+  // --- Theme Management ---
+  function applyTheme(theme) {
+    currentTheme = theme;
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('craven_theme', theme);
+
+    if (theme === 'dark') {
+      themeIcon.className = 'ph-bold ph-sun';
+      themeToggleBtn.title = 'Chuyển sang giao diện Sáng';
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#090D16');
+    } else {
+      themeIcon.className = 'ph-bold ph-moon';
+      themeToggleBtn.title = 'Chuyển sang giao diện Tối';
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#0F172A');
+    }
+  }
+
+  function toggleTheme() {
+    const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
+    applyTheme(newTheme);
+    showToast(newTheme === 'dark' ? 'Đã bật chế độ Tối (Dark Mode) 🌙' : 'Đã bật chế độ Sáng ☀️');
+  }
+
   // --- Initialize App ---
   async function init() {
     registerServiceWorker();
+    applyTheme(currentTheme);
     setupEventListeners();
     updateModeUI();
     updateSoundUI();
@@ -160,14 +190,14 @@
       modeIcon.className = 'ph-bold ph-radio';
       modeText.textContent = 'Đài FAT';
       currentModeLabel.innerHTML = '<i class="ph ph-hash"></i> Số đài FAT';
-      currentModeLabel.style.color = '#2563EB';
+      currentModeLabel.style.color = '#3B82F6';
       lcdModeIndicator.textContent = 'FAT MODE';
       lcdModeIndicator.style.color = '#34D399';
     } else {
       modeIcon.className = 'ph-bold ph-sort-ascending';
       modeText.textContent = 'Chuẩn';
       currentModeLabel.innerHTML = '<i class="ph ph-hash"></i> Số thứ tự chuẩn';
-      currentModeLabel.style.color = '#16A34A';
+      currentModeLabel.style.color = '#22C55E';
       lcdModeIndicator.textContent = 'LOGIC MODE';
       lcdModeIndicator.style.color = '#60A5FA';
     }
@@ -540,6 +570,9 @@
 
   // --- Event Listeners Setup ---
   function setupEventListeners() {
+    // Theme toggle
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
     // Mode toggle
     modeToggleBtn.addEventListener('click', toggleMode);
 
@@ -674,6 +707,15 @@
         switchView(btn.dataset.view);
       });
     });
+
+    // Listen to system theme changes if user hasn't explicitly set preference
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('craven_theme')) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    }
   }
 
   // Run on page load
