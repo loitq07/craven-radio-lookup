@@ -1,0 +1,17 @@
+{
+  "name": "craven-radio-lookup",
+  "version": "1.0.0",
+  "description": "Ứng dụng tra cứu bài hát đài Craven cho bé 0-6 tuổi (1.717 bài, 70 album)",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "craven",
+    "radio",
+    "lookup",
+    "kids",
+    "pwa"
+  ],
+  "author": "loitq",
+  "license": "MIT"
+}
