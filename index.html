@@ -5,93 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tra Cứu Đài Craven 0-6 Tuổi</title>
   <meta name="description" content="Tra cứu số bài hát và câu chuyện nhanh chóng cho đài Craven, thẻ nhớ 8GB cho bé 0-6 tuổi">
-  <meta name="theme-color" content="#1A365D">
+  <meta name="theme-color" content="#0F172A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons Web -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Top Header -->
+  <!-- Top Floating Header -->
   <header>
-    <div class="header-top">
+    <div class="header-inner">
       <div class="brand">
-        <span class="brand-icon">📻</span>
-        <div>
+        <div class="brand-icon-box">
+          <i class="ph-bold ph-radio"></i>
+        </div>
+        <div class="brand-text">
           <div class="brand-title">Đài Craven 0-6T</div>
           <div class="brand-sub">1.717 Bài • 70 Album</div>
         </div>
       </div>
-      <button id="modeToggleBtn" class="mode-toggle-btn" title="Chuyển đổi thứ tự đài phát và thứ tự chuẩn">
-        <span id="modeIcon">📻</span>
+
+      <button id="modeToggleBtn" class="mode-pill-btn" title="Chuyển đổi thứ tự đài phát và thứ tự chuẩn">
+        <span class="mode-indicator-dot"></span>
+        <i id="modeIcon" class="ph-bold ph-radio"></i>
         <span id="modeText">Đài FAT</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Views Container -->
+  <!-- Main Content Views -->
   <main>
     <!-- VIEW 1: TRA CỨU / SEARCH -->
     <section id="view-search" class="view-section active">
+      <!-- Search Input Box -->
       <div class="search-box-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Tìm tên bài, số bài, album..." autocomplete="off">
-        <button id="clearSearchBtn" class="clear-search-btn">✕</button>
+        <i class="ph ph-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Tìm tên bài, số đài, album..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-search-btn" aria-label="Xóa tìm kiếm">
+          <i class="ph-bold ph-x"></i>
+        </button>
       </div>
 
+      <!-- Quick Filter Pills -->
       <div class="filter-scroll">
-        <button class="pill-btn active" data-lang="all">Tất cả (1717)</button>
-        <button class="pill-btn" data-lang="en">🇬🇧 Tiếng Anh (1376)</button>
-        <button class="pill-btn" data-lang="vi">🇻🇳 Tiếng Việt (341)</button>
+        <button class="pill-btn active" data-lang="all">
+          <i class="ph-bold ph-squares-four"></i> Tất cả (1717)
+        </button>
+        <button class="pill-btn" data-lang="en">
+          <i class="ph-bold ph-translate"></i> Tiếng Anh (1376)
+        </button>
+        <button class="pill-btn" data-lang="vi">
+          <i class="ph-bold ph-chat-circle-dots"></i> Tiếng Việt (341)
+        </button>
       </div>
 
+      <!-- Album Selector -->
       <div class="folder-select-wrap">
+        <i class="ph ph-folder folder-icon-left"></i>
         <select id="folderSelect" class="folder-select">
           <option value="all">📁 Tất cả 70 album / chủ đề</option>
         </select>
+        <i class="ph ph-caret-down folder-icon-right"></i>
       </div>
 
+      <!-- Results Count Info Bar -->
       <div class="list-info-bar">
-        <span id="resultCountText">Đang hiển thị 1.717 bài</span>
-        <span id="currentModeLabel" style="color: #2B6CB0; font-weight:600;">Số theo đài FAT</span>
+        <div class="result-count">
+          <span class="pulse-dot"></span>
+          <span id="resultCountText">Đang hiển thị 1.717 bài</span>
+        </div>
+        <span id="currentModeLabel" class="mode-tag-label">
+          <i class="ph ph-hash"></i> Số đài FAT
+        </span>
       </div>
 
+      <!-- Track List Cards -->
       <div id="trackList" class="track-list">
-        <!-- Track cards rendered by JavaScript -->
+        <!-- Rendered by JavaScript -->
       </div>
     </section>
 
     <!-- VIEW 2: BÀN PHÍM ĐÀI / KEYPAD -->
     <section id="view-keypad" class="view-section">
       <div class="keypad-container">
-        <!-- LCD Display -->
+        <!-- Digital LCD Screen -->
         <div class="keypad-screen">
           <div class="screen-header">
-            <span>ĐÀI CRAVEN CR-836</span>
-            <span id="lcdModeIndicator">CHẾ ĐỘ FAT</span>
+            <div class="radio-model-tag">
+              <i class="ph-bold ph-radio"></i> CRAVEN CR-836
+            </div>
+            <div class="screen-controls">
+              <button id="btnSoundToggle" class="sound-toggle-btn" title="Bật/Tắt âm thanh phím">
+                <i id="soundIcon" class="ph-bold ph-speaker-high"></i>
+              </button>
+              <span id="lcdModeIndicator" class="screen-badge">FAT MODE</span>
+            </div>
           </div>
 
           <div class="screen-number-row">
-            <span class="screen-dial-hint">SỐ BÀI:</span>
-            <span id="screenDialNumber" class="screen-dial-num">----</span>
+            <span class="screen-label">SỐ BÀI:</span>
+            <div class="screen-dial-wrapper">
+              <span id="screenDialNumber" class="screen-dial-num">----</span>
+            </div>
           </div>
 
           <div class="screen-track-details">
             <div id="screenTrackTitle" class="screen-title">Bấm số trên bàn phím bên dưới</div>
-            <div id="screenTrackFolder" class="screen-folder">để tra nhanh tên bài hát & album</div>
-            <div id="screenTrackMeta" style="font-size:11px; color:#A0AEC0;">Phạm vi số từ 0001 đến 1717</div>
+            <div id="screenTrackFolder" class="screen-folder">
+              <i class="ph ph-folder-open"></i> để tra nhanh tên bài hát & album
+            </div>
+            <div id="screenTrackMeta" class="screen-meta">Phạm vi số từ 0001 đến 1717</div>
           </div>
 
           <div class="screen-nav-btns">
-            <button id="btnPrevTrack" class="screen-nav-btn">◀ Bài trước (-1)</button>
-            <button id="btnCopyTrackNum" class="screen-nav-btn">📋 Sao chép số</button>
-            <button id="btnNextTrack" class="screen-nav-btn">Bài sau (+1) ▶</button>
+            <button id="btnPrevTrack" class="screen-nav-btn">
+              <i class="ph-bold ph-caret-left"></i> Bài trước
+            </button>
+            <button id="btnCopyTrackNum" class="screen-nav-btn action">
+              <i class="ph-bold ph-copy"></i> Sao chép
+            </button>
+            <button id="btnNextTrack" class="screen-nav-btn">
+              Bài sau <i class="ph-bold ph-caret-right"></i>
+            </button>
           </div>
         </div>
 
-        <!-- Numeric Keypad Grid -->
+        <!-- Tactile Numeric Keypad Grid -->
         <div class="keypad-grid">
           <button class="key-btn" data-num="1">1</button>
           <button class="key-btn" data-num="2">2</button>
@@ -105,42 +155,61 @@
           <button class="key-btn" data-num="8">8</button>
           <button class="key-btn" data-num="9">9</button>
 
-          <button class="key-btn action" id="keyBackspace">⌫ Xoá</button>
+          <button class="key-btn action delete-btn" id="keyBackspace" title="Xóa một số">
+            <i class="ph-bold ph-backspace"></i>
+            <span>Xoá</span>
+          </button>
           <button class="key-btn" data-num="0">0</button>
-          <button class="key-btn action" id="keyClear">C Xoá hết</button>
+          <button class="key-btn action clear-btn" id="keyClear" title="Xóa hết">
+            <i class="ph-bold ph-arrows-counter-clockwise"></i>
+            <span>C</span>
+          </button>
         </div>
       </div>
     </section>
 
     <!-- VIEW 3: CHỦ ĐỀ / ALBUMS -->
     <section id="view-albums" class="view-section">
-      <div class="filter-scroll" style="margin-bottom: 12px;">
-        <button class="pill-btn active" data-album-lang="all">Tất cả (70)</button>
-        <button class="pill-btn" data-album-lang="en">🇬🇧 Tiếng Anh (45)</button>
-        <button class="pill-btn" data-album-lang="vi">🇻🇳 Tiếng Việt (25)</button>
+      <div class="filter-scroll" style="margin-bottom: 14px;">
+        <button class="pill-btn active" data-album-lang="all">
+          <i class="ph-bold ph-folders"></i> Tất cả (70)
+        </button>
+        <button class="pill-btn" data-album-lang="en">
+          <i class="ph-bold ph-translate"></i> Tiếng Anh (45)
+        </button>
+        <button class="pill-btn" data-album-lang="vi">
+          <i class="ph-bold ph-chat-circle-dots"></i> Tiếng Việt (25)
+        </button>
       </div>
 
       <div id="albumGrid" class="album-grid">
-        <!-- Album cards rendered by JavaScript -->
+        <!-- Rendered by JavaScript -->
       </div>
     </section>
 
     <!-- VIEW 4: YÊU THÍCH / FAVORITES -->
     <section id="view-favorites" class="view-section">
       <div class="list-info-bar">
-        <span id="favCountText">0 bài yêu thích</span>
-        <button id="clearAllFavBtn" style="background:none; border:none; color:#E53E3E; font-size:12px; cursor:pointer; font-weight:600;">Xoá tất cả</button>
+        <div class="result-count">
+          <i class="ph-fill ph-heart" style="color: #EF4444; font-size:15px;"></i>
+          <span id="favCountText">0 bài yêu thích</span>
+        </div>
+        <button id="clearAllFavBtn" class="clear-favs-btn">
+          <i class="ph-bold ph-trash"></i> Xoá tất cả
+        </button>
       </div>
 
       <div id="favList" class="track-list">
-        <!-- Favorite cards rendered by JavaScript -->
+        <!-- Rendered by JavaScript -->
       </div>
 
       <div id="favEmptyState" class="empty-state">
-        <div class="empty-icon">⭐</div>
+        <div class="empty-icon-wrap">
+          <i class="ph-duotone ph-heart-straight"></i>
+        </div>
+        <div class="empty-title">Chưa có bài hát yêu thích</div>
         <div class="empty-text">
-          Chưa có bài hát nào được lưu.<br>
-          Bấm biểu tượng <strong>❤️</strong> ở mỗi bài hát trong danh sách tra cứu để lưu lại bài bé thích nghe nhất nhé!
+          Chạm vào biểu tượng <i class="ph-bold ph-heart" style="color:#EF4444;"></i> ở mỗi bài hát trong danh sách tra cứu để lưu lại những bài bé thích nghe nhất nhé!
         </div>
       </div>
     </section>
@@ -148,39 +217,78 @@
     <!-- VIEW 5: HƯỚNG DẪN / GUIDE -->
     <section id="view-guide" class="view-section">
       <div class="guide-item">
-        <h3>📻 1. Cách Chọn Bài Trên Đài Craven</h3>
-        <p>• Đài Craven (CR-836, CR-853...) có dãy phím số từ <strong>0 đến 9</strong>.</p>
-        <p>• Khi đài đang phát hoặc ở chế độ chờ, bạn chỉ cần bấm trực tiếp các chữ số của bài muốn nghe (không cần bấm Play). Sau 1-2 giây, đài sẽ tự chuyển sang bài đó.</p>
-        <p>• <strong>Ví dụ:</strong>
-          <br>- Bài số <strong>4</strong>: Bấm phím <code>4</code>.
-          <br>- Bài số <strong>25</strong>: Bấm <code>2</code> rồi bấm <code>5</code>.
-          <br>- Bài số <strong>540</strong>: Bấm <code>5</code> $\rightarrow$ <code>4</code> $\rightarrow$ <code>0</code>.
-        </p>
+        <div class="guide-header">
+          <div class="guide-icon-box blue">
+            <i class="ph-bold ph-keypad"></i>
+          </div>
+          <h3>1. Cách Bấm Số Chọn Bài Trên Đài Craven</h3>
+        </div>
+        <div class="guide-body">
+          <p>• Đài Craven (CR-836, CR-853...) có dãy phím số từ <strong>0 đến 9</strong>.</p>
+          <p>• Khi đài đang phát hoặc chờ, bạn chỉ cần <strong>bấm trực tiếp các chữ số</strong> của bài muốn nghe (không cần bấm Play). Sau 1-2 giây, đài sẽ tự chuyển sang bài đó.</p>
+          <div class="example-box">
+            <strong>Ví dụ minh họa:</strong>
+            <ul>
+              <li>Bài số <strong>4</strong>: Bấm phím <code>4</code>.</li>
+              <li>Bài số <strong>25</strong>: Bấm <code>2</code> $\rightarrow$ <code>5</code>.</li>
+              <li>Bài số <strong>540</strong>: Bấm <code>5</code> $\rightarrow$ <code>4</code> $\rightarrow$ <code>0</code>.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="guide-item">
-        <h3>💡 2. Vì Sao Có Chế Độ "Đài FAT" & "Thứ Tự Chuẩn"?</h3>
-        <p>• <strong>Chế độ Đài FAT (Mặc định):</strong> Đài Craven đọc danh sách file theo thứ tự vật lý ghi trên thẻ nhớ. Do các thư mục gốc đặt tên <code>1.1</code>, <code>1.2</code>..., Windows ghi vào thẻ theo thứ tự chữ cái (<code>1.1</code> rồi đến <code>1.10</code>... sau đó mới đến <code>1.2</code>). <strong>Hãy dùng chế độ này để bấm phím trên đài đúng 100%</strong>.</p>
-        <p>• <strong>Chế độ Chuẩn (Logic):</strong> Sắp xếp lần lượt từng tháng tuổi từ Tháng 1 đến Tháng 9 rồi mới sang phần tiếp theo.</p>
+        <div class="guide-header">
+          <div class="guide-icon-box amber">
+            <i class="ph-bold ph-info"></i>
+          </div>
+          <h3>2. Vì Sao Có Chế Độ "Đài FAT" & "Thứ Tự Chuẩn"?</h3>
+        </div>
+        <div class="guide-body">
+          <p>• <strong>Chế độ Đài FAT (Mặc định):</strong> Đài Craven đọc danh sách file theo thứ tự vật lý ghi trên thẻ nhớ. Do các thư mục gốc đặt tên <code>1.1</code>, <code>1.2</code>..., hệ điều hành ghi vào thẻ theo thứ tự chữ cái (<code>1.1</code> rồi đến <code>1.10</code>... sau đó mới đến <code>1.2</code>). <strong>Hãy dùng chế độ này để bấm phím trên đài đúng 100%</strong>.</p>
+          <p>• <strong>Chế độ Chuẩn (Logic):</strong> Sắp xếp lần lượt từng tháng tuổi từ Tháng 1 đến Tháng 9 rồi mới sang các phần tiếp theo.</p>
+        </div>
       </div>
 
       <div class="guide-item">
-        <h3>⚡ 3. Cài Đặt Ứng Dụng Này Về Màn Hình Điện Thoại</h3>
-        <p>Bạn có thể thêm ứng dụng này ra màn hình chính như một ứng dụng thật:</p>
-        <ul>
-          <li><strong>Trên iPhone (Safari):</strong> Bấm nút <em>Chia sẻ</em> (biểu tượng ô vuông mũi tên lên) $\rightarrow$ chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong>.</li>
-          <li><strong>Trên Android (Chrome):</strong> Bấm dấu 3 chấm góc phải $\rightarrow$ chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
-        </ul>
-        <p style="margin-top:6px; color:#276749; font-weight:600;">✓ Ứng dụng hoạt động mượt mà 100% ngay cả khi tắt WiFi / 4G (Offline).</p>
+        <div class="guide-header">
+          <div class="guide-icon-box green">
+            <i class="ph-bold ph-device-mobile"></i>
+          </div>
+          <h3>3. Cài Đặt Ứng Dụng Về Màn Hình Điện Thoại</h3>
+        </div>
+        <div class="guide-body">
+          <p>Bạn có thể thêm ứng dụng này ra màn hình chính như một ứng dụng thật:</p>
+          <ul>
+            <li><strong>Trên iPhone (Safari):</strong> Bấm nút <em>Chia sẻ</em> (biểu tượng ô vuông mũi tên lên) $\rightarrow$ chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
+            <li><strong>Trên Android (Chrome):</strong> Bấm dấu 3 chấm góc phải $\rightarrow$ chọn <strong>"Cài đặt ứng dụng"</strong> hoặc <strong>"Thêm vào Màn hình chính"</strong>.</li>
+          </ul>
+          <div class="offline-badge">
+            <i class="ph-bold ph-check-circle"></i> Hoạt động mượt mà 100% ngay cả khi tắt mạng (Offline).
+          </div>
+        </div>
       </div>
 
       <div class="guide-item">
-        <h3>👶 4. Gợi Ý Nghe Theo Lứa Tuổi Cho Bé</h3>
-        <ul>
-          <li><strong>Bé sơ sinh (0 - 1 tuổi):</strong> Bật <em>Tiếng ồn trắng</em> (bài 1328-1376) ru ngủ sâu hoặc <em>Mozart / Beethoven</em> (1671-1700).</li>
-          <li><strong>Bé 1 - 3 tuổi:</strong> Bật <em>KLE các tháng</em> và <em>Songs For Kids</em> (nhạc thiếu nhi vui tươi, dễ nhún nhảy).</li>
-          <li><strong>Bé 3 - 6 tuổi:</strong> Bật <em>GrapeSEED</em> (tiếng Anh mầm non), <em>Kể chuyện cổ tích</em> và <em>Thơ Góc sân và khoảng trời</em>.</li>
-        </ul>
+        <div class="guide-header">
+          <div class="guide-icon-box purple">
+            <i class="ph-bold ph-sparkle"></i>
+          </div>
+          <h3>4. Lộ Trình Gợi Ý Theo Lứa Tuổi Cho Bé</h3>
+        </div>
+        <div class="guide-body">
+          <ul class="age-list">
+            <li>
+              <strong>👶 Bé sơ sinh (0 - 1 tuổi):</strong> Bật <em>Tiếng ồn trắng</em> (bài 1328-1376) ru ngủ sâu hoặc <em>Mozart / Beethoven</em> (1671-1700).
+            </li>
+            <li>
+              <strong>🧒 Bé 1 - 3 tuổi:</strong> Bật <em>KLE các tháng</em> và <em>Songs For Kids</em> (nhạc thiếu nhi vui tươi, phát triển vận động).
+            </li>
+            <li>
+              <strong>👧 Bé 3 - 6 tuổi:</strong> Bật <em>GrapeSEED</em> (tiếng Anh mầm non), <em>Kể chuyện cổ tích</em> và <em>Thơ Góc sân và khoảng trời</em>.
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
   </main>
@@ -188,49 +296,65 @@
   <!-- Track Detail Modal Sheet -->
   <div id="trackModal" class="modal-overlay">
     <div class="modal-sheet">
+      <div class="sheet-drag-handle"></div>
       <div class="modal-header">
         <div class="modal-title" id="modalTitle">Chi Tiết Bài Hát</div>
-        <button id="modalCloseBtn" class="modal-close-btn">✕</button>
+        <button id="modalCloseBtn" class="modal-close-btn" aria-label="Đóng">
+          <i class="ph-bold ph-x"></i>
+        </button>
       </div>
-      <div style="text-align: center; margin: 16px 0;">
-        <div style="font-size: 11px; color:#718096; text-transform:uppercase; font-weight:700;">BẤM SỐ TRÊN ĐÀI CRAVEN</div>
-        <div id="modalBigNumber" style="font-family:Consolas, monospace; font-size: 46px; font-weight: 800; color: #2B6CB0; margin: 4px 0;">0001</div>
-        <div id="modalSongName" style="font-size: 17px; font-weight: 700; color: #1A202C; margin-bottom: 6px;">Tên bài hát</div>
-        <div id="modalAlbumName" style="font-size: 13px; color: #718096;">Thuộc album</div>
+
+      <div class="modal-body-content">
+        <div class="modal-badge-label">
+          <i class="ph-bold ph-radio"></i> BẤM SỐ TRÊN ĐÀI CRAVEN
+        </div>
+        <div id="modalBigNumber" class="modal-big-number">0001</div>
+        <div id="modalSongName" class="modal-song-name">Tên bài hát</div>
+        <div id="modalAlbumName" class="modal-album-name">Thuộc album</div>
       </div>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button id="modalFavBtn" style="flex:1; padding: 12px; background:#EDF2F7; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">❤️ Lưu yêu thích</button>
-        <button id="modalCopyBtn" style="flex:1; padding: 12px; background:#1A365D; color:#FFF; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">📋 Sao chép số</button>
+
+      <div class="modal-actions">
+        <button id="modalFavBtn" class="modal-btn secondary">
+          <i class="ph-bold ph-heart"></i>
+          <span>Lưu yêu thích</span>
+        </button>
+        <button id="modalCopyBtn" class="modal-btn primary">
+          <i class="ph-bold ph-copy"></i>
+          <span>Sao chép số</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Bottom Floating Navigation Bar -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-view="search">
-      <span class="nav-icon">🔍</span>
+      <i class="ph-bold ph-magnifying-glass nav-icon"></i>
       <span>Tra cứu</span>
     </button>
     <button class="nav-item" data-view="keypad">
-      <span class="nav-icon">🔢</span>
+      <i class="ph-bold ph-keypad nav-icon"></i>
       <span>Bàn phím</span>
     </button>
     <button class="nav-item" data-view="albums">
-      <span class="nav-icon">📁</span>
+      <i class="ph-bold ph-folders nav-icon"></i>
       <span>Chủ đề</span>
     </button>
     <button class="nav-item" data-view="favorites">
-      <span class="nav-icon">❤️</span>
+      <i class="ph-bold ph-heart nav-icon"></i>
       <span>Yêu thích</span>
     </button>
     <button class="nav-item" data-view="guide">
-      <span class="nav-icon">❓</span>
+      <i class="ph-bold ph-info nav-icon"></i>
       <span>Hướng dẫn</span>
     </button>
   </nav>
 
-  <!-- Toast notification -->
-  <div id="toast" class="toast">Đã sao chép số bài!</div>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <i class="ph-bold ph-check"></i>
+    <span id="toastMsg">Đã sao chép số bài!</span>
+  </div>
 
   <script src="app.js"></script>
 </body>

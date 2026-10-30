@@ -14,6 +14,7 @@
 
   let dialedNumber = '';
   let favorites = new Set(JSON.parse(localStorage.getItem('craven_favs') || '[]'));
+  let soundEnabled = localStorage.getItem('craven_sound') !== 'false';
   let audioCtx = null;
   let activeModalTrack = null;
 
@@ -37,6 +38,8 @@
   const btnPrevTrack = document.getElementById('btnPrevTrack');
   const btnNextTrack = document.getElementById('btnNextTrack');
   const btnCopyTrackNum = document.getElementById('btnCopyTrackNum');
+  const btnSoundToggle = document.getElementById('btnSoundToggle');
+  const soundIcon = document.getElementById('soundIcon');
 
   // Album & Fav elements
   const albumGridEl = document.getElementById('albumGrid');
@@ -54,6 +57,7 @@
   const modalFavBtn = document.getElementById('modalFavBtn');
   const modalCopyBtn = document.getElementById('modalCopyBtn');
   const toastEl = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
 
   // --- Helpers ---
   function removeAccents(str) {
@@ -70,7 +74,7 @@
   }
 
   function showToast(msg) {
-    toastEl.textContent = msg;
+    toastMsg.textContent = msg;
     toastEl.classList.add('show');
     setTimeout(() => {
       toastEl.classList.remove('show');
@@ -78,6 +82,7 @@
   }
 
   function playKeyClick() {
+    if (!soundEnabled) return;
     try {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -88,13 +93,13 @@
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+      osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.05);
+      osc.stop(audioCtx.currentTime + 0.04);
     } catch (e) {
       // Audio not permitted or supported
     }
@@ -105,6 +110,7 @@
     registerServiceWorker();
     setupEventListeners();
     updateModeUI();
+    updateSoundUI();
 
     try {
       const res = await fetch('tracks_data.json');
@@ -117,8 +123,11 @@
       console.error('Error loading tracks data:', err);
       trackListEl.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon">⚠️</div>
-          <div class="empty-text">Không thể tải dữ liệu bài hát.<br>Vui lòng thử lại sau!</div>
+          <div class="empty-icon-wrap">
+            <i class="ph-bold ph-warning"></i>
+          </div>
+          <div class="empty-title">Không thể tải dữ liệu</div>
+          <div class="empty-text">Vui lòng kiểm tra lại kết nối mạng hoặc thử lại sau!</div>
         </div>`;
     }
   }
@@ -148,17 +157,19 @@
   // --- Mode Switching ---
   function updateModeUI() {
     if (mode === 'fat') {
-      modeIcon.textContent = '📻';
+      modeIcon.className = 'ph-bold ph-radio';
       modeText.textContent = 'Đài FAT';
-      currentModeLabel.textContent = 'Số theo đài FAT';
-      currentModeLabel.style.color = '#2B6CB0';
-      lcdModeIndicator.textContent = 'CHẾ ĐỘ FAT';
+      currentModeLabel.innerHTML = '<i class="ph ph-hash"></i> Số đài FAT';
+      currentModeLabel.style.color = '#2563EB';
+      lcdModeIndicator.textContent = 'FAT MODE';
+      lcdModeIndicator.style.color = '#34D399';
     } else {
-      modeIcon.textContent = '🔢';
+      modeIcon.className = 'ph-bold ph-sort-ascending';
       modeText.textContent = 'Chuẩn';
-      currentModeLabel.textContent = 'Số thứ tự chuẩn';
-      currentModeLabel.style.color = '#276749';
-      lcdModeIndicator.textContent = 'CHẾ ĐỘ CHUẨN';
+      currentModeLabel.innerHTML = '<i class="ph ph-hash"></i> Số thứ tự chuẩn';
+      currentModeLabel.style.color = '#16A34A';
+      lcdModeIndicator.textContent = 'LOGIC MODE';
+      lcdModeIndicator.style.color = '#60A5FA';
     }
     localStorage.setItem('craven_mode', mode);
   }
@@ -173,6 +184,23 @@
       updateDialDisplay();
     }
     showToast(mode === 'fat' ? 'Chuyển sang: Thứ tự đài FAT' : 'Chuyển sang: Thứ tự chuẩn');
+  }
+
+  function updateSoundUI() {
+    if (soundEnabled) {
+      soundIcon.className = 'ph-bold ph-speaker-high';
+      btnSoundToggle.classList.remove('muted');
+    } else {
+      soundIcon.className = 'ph-bold ph-speaker-slash';
+      btnSoundToggle.classList.add('muted');
+    }
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('craven_sound', soundEnabled);
+    updateSoundUI();
+    showToast(soundEnabled ? 'Đã bật âm thanh phím' : 'Đã tắt âm thanh phím');
   }
 
   // --- Track Filtering ---
@@ -219,8 +247,11 @@
     if (filteredTracks.length === 0) {
       trackListEl.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon">🔍</div>
-          <div class="empty-text">Không tìm thấy bài hát nào phù hợp.<br>Hãy thử từ khóa khác!</div>
+          <div class="empty-icon-wrap">
+            <i class="ph-duotone ph-magnifying-glass"></i>
+          </div>
+          <div class="empty-title">Không tìm thấy bài hát nào</div>
+          <div class="empty-text">Hãy thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc album!</div>
         </div>`;
       return;
     }
@@ -239,6 +270,9 @@
       card.className = 'track-card';
       card.dataset.id = track.i;
 
+      const langIcon = track.l === 'en' ? '<i class="ph ph-translate"></i>' : '<i class="ph ph-chat-circle-dots"></i>';
+      const langText = track.l === 'en' ? 'Tiếng Anh' : 'Tiếng Việt';
+
       card.innerHTML = `
         <div class="track-number-badge ${mode === 'nat' ? 'nat-mode' : ''}">
           <span class="track-num-label">BÀI</span>
@@ -247,18 +281,22 @@
         <div class="track-info">
           <div class="track-title">${escapeHtml(track.t)}</div>
           <div class="track-meta">
-            <span class="lang-tag ${track.l}">${track.l === 'en' ? '🇬🇧 Tiếng Anh' : '🇻🇳 Tiếng Việt'}</span>
-            <span class="track-folder-name" title="${escapeHtml(track.fn)}">• ${escapeHtml(track.fn)}</span>
+            <span class="lang-tag ${track.l}">${langIcon} ${langText}</span>
+            <span class="track-folder-name" title="${escapeHtml(track.fn)}">
+              <i class="ph ph-folder"></i> ${escapeHtml(track.fn)}
+            </span>
           </div>
         </div>
-        <button class="fav-btn ${isFav ? 'active' : ''}" data-fav-id="${track.i}" title="Lưu yêu thích">
-          ${isFav ? '❤️' : '🤍'}
-        </button>
+        <div class="card-actions">
+          <button class="fav-btn ${isFav ? 'active' : ''}" data-fav-id="${track.i}" title="Lưu yêu thích" aria-label="Lưu yêu thích">
+            <i class="${isFav ? 'ph-fill ph-heart' : 'ph ph-heart'}"></i>
+          </button>
+        </div>
       `;
 
       // Open detail modal on card click
       card.addEventListener('click', (e) => {
-        if (e.target.closest('.fav-btn')) return; // handled by fav click
+        if (e.target.closest('.fav-btn')) return;
         openTrackModal(track);
       });
 
@@ -288,14 +326,14 @@
       favorites.delete(trackId);
       if (btnEl) {
         btnEl.classList.remove('active');
-        btnEl.textContent = '🤍';
+        btnEl.innerHTML = '<i class="ph ph-heart"></i>';
       }
-      showToast('Đã xóa khỏi yêu thích');
+      showToast('Đã xóa khỏi danh sách yêu thích');
     } else {
       favorites.add(trackId);
       if (btnEl) {
         btnEl.classList.add('active');
-        btnEl.textContent = '❤️';
+        btnEl.innerHTML = '<i class="ph-fill ph-heart"></i>';
       }
       showToast('Đã thêm vào yêu thích ❤️');
     }
@@ -328,6 +366,9 @@
       const trackNum = mode === 'fat' ? track.i : track.n;
       const formattedNum = formatTrackNum(trackNum);
 
+      const langIcon = track.l === 'en' ? '<i class="ph ph-translate"></i>' : '<i class="ph ph-chat-circle-dots"></i>';
+      const langText = track.l === 'en' ? 'Tiếng Anh' : 'Tiếng Việt';
+
       const card = document.createElement('div');
       card.className = 'track-card';
       card.innerHTML = `
@@ -338,11 +379,15 @@
         <div class="track-info">
           <div class="track-title">${escapeHtml(track.t)}</div>
           <div class="track-meta">
-            <span class="lang-tag ${track.l}">${track.l === 'en' ? '🇬🇧 Tiếng Anh' : '🇻🇳 Tiếng Việt'}</span>
-            <span class="track-folder-name">• ${escapeHtml(track.fn)}</span>
+            <span class="lang-tag ${track.l}">${langIcon} ${langText}</span>
+            <span class="track-folder-name"><i class="ph ph-folder"></i> ${escapeHtml(track.fn)}</span>
           </div>
         </div>
-        <button class="fav-btn active" data-fav-id="${track.i}">❤️</button>
+        <div class="card-actions">
+          <button class="fav-btn active" data-fav-id="${track.i}" title="Bỏ yêu thích">
+            <i class="ph-fill ph-heart"></i>
+          </button>
+        </div>
       `;
 
       card.addEventListener('click', (e) => {
@@ -374,17 +419,23 @@
         ? `${formatTrackNum(folder.fatStart)} - ${formatTrackNum(folder.fatEnd)}`
         : `${formatTrackNum(folder.natStart)} - ${formatTrackNum(folder.natEnd)}`;
 
+      const langIcon = folder.lang === 'en' ? '<i class="ph ph-translate"></i>' : '<i class="ph ph-chat-circle-dots"></i>';
+      const langText = folder.lang === 'en' ? 'Tiếng Anh' : 'Tiếng Việt';
+
       const card = document.createElement('div');
       card.className = 'album-card';
       card.innerHTML = `
         <div class="album-header">
           <div class="album-title">${escapeHtml(folder.name)}</div>
-          <span class="album-range-badge">${range}</span>
+          <span class="album-range-badge"># ${range}</span>
         </div>
         <div class="album-desc">${escapeHtml(folder.desc || '')}</div>
         <div class="album-footer">
-          <span class="lang-tag ${folder.lang}">${folder.lang === 'en' ? '🇬🇧 Tiếng Anh' : '🇻🇳 Tiếng Việt'}</span>
-          <span>${folder.count} bài hát / audio ▶</span>
+          <span class="lang-tag ${folder.lang}">${langIcon} ${langText}</span>
+          <span class="album-count-tag">
+            <i class="ph-bold ph-music-notes"></i> ${folder.count} bài
+            <i class="ph ph-caret-right" style="font-size:12px; color:#94A3B8;"></i>
+          </span>
         </div>
       `;
 
@@ -419,7 +470,7 @@
     if (!dialedNumber) {
       screenDialNumber.textContent = '----';
       screenTrackTitle.textContent = 'Bấm số trên bàn phím';
-      screenTrackFolder.textContent = 'để tra nhanh tên bài hát & album';
+      screenTrackFolder.innerHTML = '<i class="ph ph-folder-open"></i> để tra nhanh tên bài hát & album';
       screenTrackMeta.textContent = 'Phạm vi số từ 0001 đến 1717';
       return;
     }
@@ -429,7 +480,7 @@
 
     if (numVal < 1 || numVal > 1717) {
       screenTrackTitle.textContent = 'Không tìm thấy bài số ' + numVal;
-      screenTrackFolder.textContent = 'Thẻ nhớ chỉ có từ bài 0001 đến 1717';
+      screenTrackFolder.innerHTML = '<i class="ph ph-warning-circle"></i> Thẻ nhớ chỉ có bài từ 0001 đến 1717';
       screenTrackMeta.textContent = 'Vui lòng bấm lại số khác';
       return;
     }
@@ -439,8 +490,8 @@
 
     if (foundTrack) {
       screenTrackTitle.textContent = foundTrack.t;
-      screenTrackFolder.textContent = `📁 ${foundTrack.fn}`;
-      screenTrackMeta.textContent = `${foundTrack.l === 'en' ? '🇬🇧 Tiếng Anh' : '🇻🇳 Tiếng Việt'} • Bấm phím ${formatTrackNum(numVal)} trên đài Craven`;
+      screenTrackFolder.innerHTML = `<i class="ph ph-folder"></i> ${escapeHtml(foundTrack.fn)}`;
+      screenTrackMeta.textContent = `${foundTrack.l === 'en' ? '🇬🇧 Tiếng Anh' : '🇻🇳 Tiếng Việt'} • Phím bấm: ${formatTrackNum(numVal)}`;
     }
   }
 
@@ -463,8 +514,7 @@
     modalAlbumName.textContent = `Thuộc album: ${track.fn} (${track.l === 'en' ? 'Tiếng Anh' : 'Tiếng Việt'})`;
 
     const isFav = favorites.has(track.i);
-    modalFavBtn.textContent = isFav ? '❤️ Đã lưu yêu thích' : '🤍 Thêm vào yêu thích';
-    modalFavBtn.style.color = isFav ? '#E53E3E' : '#4A5568';
+    modalFavBtn.innerHTML = `<i class="${isFav ? 'ph-fill ph-heart' : 'ph-bold ph-heart'}" style="${isFav ? 'color:#EF4444;' : ''}"></i> <span>${isFav ? 'Đã lưu yêu thích' : 'Lưu yêu thích'}</span>`;
 
     trackModal.classList.add('active');
   }
@@ -493,11 +543,14 @@
     // Mode toggle
     modeToggleBtn.addEventListener('click', toggleMode);
 
+    // Sound toggle
+    btnSoundToggle.addEventListener('click', toggleSound);
+
     // Search input
     let searchTimeout = null;
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
-      clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
+      clearSearchBtn.style.display = searchQuery ? 'flex' : 'none';
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         filterTracks();
@@ -567,8 +620,9 @@
 
     btnCopyTrackNum.addEventListener('click', () => {
       if (dialedNumber) {
-        navigator.clipboard.writeText(dialedNumber.padStart(4, '0'));
-        showToast(`Đã sao chép số: ${dialedNumber.padStart(4, '0')}`);
+        const numStr = dialedNumber.padStart(4, '0');
+        navigator.clipboard.writeText(numStr);
+        showToast(`Đã sao chép số: ${numStr}`);
       }
     });
 
@@ -590,12 +644,11 @@
       if (activeModalTrack) {
         toggleFavorite(activeModalTrack.i, null);
         const isFav = favorites.has(activeModalTrack.i);
-        modalFavBtn.textContent = isFav ? '❤️ Đã lưu yêu thích' : '🤍 Thêm vào yêu thích';
-        modalFavBtn.style.color = isFav ? '#E53E3E' : '#4A5568';
+        modalFavBtn.innerHTML = `<i class="${isFav ? 'ph-fill ph-heart' : 'ph-bold ph-heart'}" style="${isFav ? 'color:#EF4444;' : ''}"></i> <span>${isFav ? 'Đã lưu yêu thích' : 'Lưu yêu thích'}</span>`;
         // Also update card in search list if visible
         const cardFavBtn = document.querySelector(`.track-card[data-id="${activeModalTrack.i}"] .fav-btn`);
         if (cardFavBtn) {
-          cardFavBtn.textContent = isFav ? '❤️' : '🤍';
+          cardFavBtn.innerHTML = `<i class="${isFav ? 'ph-fill ph-heart' : 'ph ph-heart'}"></i>`;
           cardFavBtn.classList.toggle('active', isFav);
         }
       }
@@ -608,7 +661,7 @@
         localStorage.removeItem('craven_favs');
         renderFavorites();
         document.querySelectorAll('.track-card .fav-btn').forEach(btn => {
-          btn.textContent = '🤍';
+          btn.innerHTML = '<i class="ph ph-heart"></i>';
           btn.classList.remove('active');
         });
         showToast('Đã xóa tất cả bài yêu thích');
